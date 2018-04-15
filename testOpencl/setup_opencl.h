@@ -1,7 +1,7 @@
 #ifndef __SETUP_OPENCL
 #define __SETUP_OPENCL
 
-
+#include<CL/cl.h>
 /*
  * 0: no C++ OOP version yet 
  */

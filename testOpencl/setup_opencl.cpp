@@ -1,6 +1,8 @@
 
 #include"setup_opencl.h"
 
+
+#include<iostream>
 using namespace std;
 
 cl_int CreateContext()
@@ -24,7 +26,7 @@ cl_int CreateContext()
 	{
 		CL_CONTEXT_PLATFORM, (cl_context_properties)firstPlatformId,
 		0
-	}
+	};
 	context = clCreateContextFromType( 
 		contextProperties,
 		CL_DEVICE_TYPE_GPU,
@@ -41,11 +43,11 @@ cl_int CreateContext()
 			CL_DEVICE_TYPE_GPU,
 			NULL,
 			NULL,
-			&errNUm
+			&errNum
 			);
 		if(CL_SUCCESS != errNum)
 		{
-			cerr << "Failed to create CPU context, too."<<end;
+			cerr << "Failed to create CPU context, too."<<endl;
 			return NULL;
 		}
 	}
@@ -58,4 +60,6 @@ cl_command_queue CreateCommandQueue(
 	cl_device_id *device
 )
 {
+	cl_command_queue cmdQueue = NULL;
+	return cmdQueue;
 }

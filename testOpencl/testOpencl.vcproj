@@ -201,6 +201,10 @@
 				RelativePath=".\kernel.cl"
 				>
 			</File>
+			<File
+				RelativePath=".\kernel2.cl"
+				>
+			</File>
 		</Filter>
 	</Files>
 	<Globals>
