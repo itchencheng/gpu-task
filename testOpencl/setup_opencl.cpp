@@ -1,65 +1,81 @@
 
 #include"setup_opencl.h"
 
+#include<cstdio>
+#include<cstdlib>
 
-#include<iostream>
-using namespace std;
-
-cl_int CreateContext()
+cl_int SetupOpenCL()
 {
-	cl_int errNum;
+	printf("Begin to setup OpenCL environment!\n");
+
+	cl_int status = CL_SUCCESS;
 	
-	/* get platform info */
-	cl_uint numPlatforms;
-	cl_platform_id firstPlatformId;
-	errNum = clGetPlatformIDs(1, &firstPlatformId, &numPlatforms);
-	if(CL_SUCCESS != errNum)
+	/* get all platform IDs */
+	cl_uint platformNum;
+	status = clGetPlatformIDs(0, NULL, &platformNum);/* get platform number */
+	if(CL_SUCCESS != status || platformNum < 1)
 	{
-		cerr << "Failed to find andy OpenCL platforms." <<endl;
-		return NULL;
+		printf("Error: clGetPlatformIDs %d.\n", status);
+		return status;
+	}
+	if(platformNum < 1)
+	{
+		printf("Error: platform number < 1.\n");
+		return -1;
 	}
 
-	/* create Context */
-	cl_context context = NULL; /* cl_context 使用NULL来初始化 ? */
-	/* GPU */
-	cl_context_properties contextProperties[] = 
+	cl_platform_id *platforms;
+	cl_device_id   **devices;
+	cl_uint        *deviceNum;
+	cl_uint        *deviceIdx;
+	
+	platforms = (cl_platform_id*)malloc(platformNum * sizeof(cl_platform_id)); /*malloc */
+	devices   = (cl_device_id**)malloc(platformNum * sizeof(cl_device_id*));
+	deviceNum = (cl_uint*)malloc(platformNum * sizeof(cl_uint));
+	deviceIdx = (cl_uint*)malloc(platformNum * sizeof(cl_uint));
+
+	status = clGetPlatformIDs(platformNum, platforms, NULL);/* get platform IDs */
+	if(CL_SUCCESS != status)
 	{
-		CL_CONTEXT_PLATFORM, (cl_context_properties)firstPlatformId,
-		0
-	};
-	context = clCreateContextFromType( 
-		contextProperties,
-		CL_DEVICE_TYPE_GPU,
-		NULL,
-		NULL,
-		&errNum
-		);
-	if(CL_SUCCESS != errNum)
-	{
-		cout << "could not create GPU context, trying CPU..."<<endl;
-		/* CPU */
-		context = clCreateContextFromType(
-			contextProperties,
-			CL_DEVICE_TYPE_GPU,
-			NULL,
-			NULL,
-			&errNum
-			);
-		if(CL_SUCCESS != errNum)
-		{
-			cerr << "Failed to create CPU context, too."<<endl;
-			return NULL;
-		}
+		printf("Error: clGetPlatformIDs %d.\n", status);
+		return status;
 	}
+
+	/* get all devices id for all platforms */
+	for(cl_uint i = 0; i < platformNum; i++)
+	{
+		status = clGetDeviceIDs(platforms[i], CL_DEVICE_TYPE_ALL, 0, NULL, &deviceNum[i]); /* get device number */
+		if(CL_SUCCESS != status)
+		{
+			printf("Error: clGetDeviceIDs %d.\n", status);
+			return status;
+		}
+		if(deviceNum[i] < 1)
+		{
+			printf("Error: device number < 1.\n");
+			return -1;
+		}
+
+		devices[i] = (cl_device_id*)malloc(deviceNum[i] * sizeof(cl_device_id)); /* malloc */
+
+		status = clGetDeviceIDs(platforms[i], CL_DEVICE_TYPE_ALL, deviceNum[i], devices[i], NULL); /* get device IDs */
+	}
+
+	/* choose a platform */
+
+	/* choose a device */
+
+	/* create a context */
+
+	/* create a command queue */
+
+	return status;
 }
 
 
-/* pick a device, create a command queue */
-cl_command_queue CreateCommandQueue(
-	cl_context context,
-	cl_device_id *device
-)
+cl_int ReleaseOpenCL()
 {
-	cl_command_queue cmdQueue = NULL;
-	return cmdQueue;
+	cl_int status = CL_SUCCESS;
+
+	return status;
 }

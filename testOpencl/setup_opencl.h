@@ -7,8 +7,6 @@
  */
 #define CPP_STYLE 0
 
-
-
 #if CPP_STYLE
 /* C++ style interface */
 
@@ -18,6 +16,10 @@
 struct CtxHandle{
 	
 };
+
+cl_int SetupOpenCL();
+cl_int ReleaseOpenCL();
+
 
 
 #endif //CPP_STYLE

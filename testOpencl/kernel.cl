@@ -2,7 +2,8 @@
  * this is the opencl kernel file
  */
  
-__kernel void hello_kernel(__global const float *a,
+__kernel void kernel_add(
+	__global const float *a,
 	__global const float *b,
 	__global float *result
 	)
