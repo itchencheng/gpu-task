@@ -13,11 +13,22 @@
 #else
 
 /* C style interface */
-struct CtxHandle{
+struct OclHandle{
+	/* platform */
+	cl_uint platformNum;
+	cl_platform_id *platforms;
+	cl_uint platformIdx;
+	/* device */
+	cl_device_id   **devices;
+	cl_uint        *deviceNum;
+	cl_uint        *deviceIdx;
+	/* context and command queue */
+	cl_context context;
+	cl_command_queue commandQueue;	
 };
 
-cl_int SetupOpenCL();
-cl_int ReleaseOpenCL();
+cl_int SetupOpenCL(OclHandle* handle);
+cl_int ReleaseOpenCL(OclHandle* handle);
 
 
 

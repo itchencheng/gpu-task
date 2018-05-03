@@ -10,6 +10,11 @@ using namespace std;
 int main(int argc, char** argv)
 {
 	cout << "hello OpenCL!" <<endl;
-	SetupOpenCL();
+
+    OclHandle *handle;
+    handle = (OclHandle*)calloc(1, sizeof(OclHandle));
+    
+    SetupOpenCL(handle);
+    
 	return 0;
 }
