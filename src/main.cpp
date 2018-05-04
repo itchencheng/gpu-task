@@ -9,12 +9,17 @@ using namespace std;
 
 int main(int argc, char** argv)
 {
+    cl_int status;
+    
 	cout << "hello OpenCL!" <<endl;
 
     OclHandle *handle;
     handle = (OclHandle*)calloc(1, sizeof(OclHandle));
     
-    SetupOpenCL(handle);
+    status = SetupOpenCL(handle);
     
+    status = ReleaseOpenCL(handle);
+    
+    free(handle);
 	return 0;
 }

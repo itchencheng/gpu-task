@@ -135,6 +135,51 @@ cl_int SetupOpenCL(OclHandle* handle)
 cl_int ReleaseOpenCL(OclHandle* handle)
 {
 	cl_int status = CL_SUCCESS;
-
+	
+	if(NULL != handle->platforms)
+	{
+		free(handle->platforms);
+	}
+	
+	if(NULL != handle->devices)
+	{
+		for(int i = 0; i< handle->platformNum; i++)
+		{
+			free(handle->devices[i]);
+		}
+		free(handle->devices);
+	}
+	
+	if(NULL != handle->deviceNum)
+	{
+		free(handle->deviceNum);
+	}
+	
+	if(NULL != handle->deviceIdx)
+	{
+		free(handle->deviceIdx);
+	}
+	
+	if(NULL != handle->context)
+	{
+		status = clReleaseContext(handle->context);
+		if(CL_SUCCESS != status)
+		{
+			printf("Error: clReleaseContext %d.\n", status);
+			return status;
+		}
+	}
+	
+	if(NULL != handle->commandQueue)
+	{
+		status = clReleaseCommandQueue(handle->commandQueue);
+		if(CL_SUCCESS != status)
+		{
+			printf("Error: clReleaseCommandQueue %d.\n", status);
+			return status;
+		}
+	}
+	
+	printf("OpenCL environment Released!\n");
 	return status;
 }
