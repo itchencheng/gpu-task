@@ -13,6 +13,6 @@ build:
         -lOpenCL 
 
 clean:
-	rm -rf *.so a.out
+	rm -rf *.so a.out src/*.h.gch
 
 # very funny, the lOpenCL must write at the last
