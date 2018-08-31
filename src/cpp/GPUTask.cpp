@@ -13,22 +13,28 @@
 
 #include "GPUTask.h"
 
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+
+#define VENDOR_NAME "NVIDIA"
+
 
 GPUTask::GPUTask()
 {
     /* platform */
-    cl_uint             platformNum = 0;
-    cl_platform_id *    platforms = nullptr;
-    cl_uint             platformIdx = 0;
+    cl_uint             platformNum_ = 0;
+    cl_platform_id *    platforms_ = NULL;
+    cl_uint             platformIdx_ = 0;
 
     /* device */
-    cl_device_id **     devices = nullptr;
-    cl_uint *           deviceNum = nullptr;
-    cl_uint *           deviceIdx = nullptr;
+    cl_device_id **     devices_ = NULL;
+    cl_uint *           deviceNum_ = NULL;
+    cl_uint *           deviceIdx_ = NULL;
 
-    /* context and command queue */
-    cl_context          context = nullptr;
-    cl_command_queue    commandQueue = nullptr;    
+    /* context_ and command queue */
+    cl_context          context_ = NULL;
+    cl_command_queue    commandQueue_ = NULL;    
 }
 
 
@@ -43,37 +49,37 @@ cl_int GPUTask::SetupOpenCL()
     cl_int status = CL_SUCCESS;
     
     /* get all platform IDs */
-    status = clGetPlatformIDs(0, NULL, &(platformNum));/* get platform number */
+    status = clGetPlatformIDs(0, NULL, &(platformNum_));/* get platform number */
     if (CL_SUCCESS != status )
     {
         printf("Error: clGetPlatformIDs %d.\n", status);
         return status;
     }
     
-    platforms = (cl_platform_id *)malloc(platformNum * sizeof(cl_platform_id)); /*malloc */
-    devices   = (cl_device_id **)malloc(platformNum * sizeof(cl_device_id *));
-    deviceNum = (cl_uint *)malloc(platformNum * sizeof(cl_uint));
-    deviceIdx = (cl_uint *)malloc(platformNum * sizeof(cl_uint));
+    platforms_ = (cl_platform_id *)malloc(platformNum_ * sizeof(cl_platform_id)); /*malloc */
+    devices_   = (cl_device_id **)malloc(platformNum_ * sizeof(cl_device_id *));
+    deviceNum_ = (cl_uint *)malloc(platformNum_ * sizeof(cl_uint));
+    deviceIdx_ = (cl_uint *)malloc(platformNum_ * sizeof(cl_uint));
 
-    status = clGetPlatformIDs(platformNum, platforms, NULL);/* get platform IDs */
+    status = clGetPlatformIDs(platformNum_, platforms_, NULL);/* get platform IDs */
     if (CL_SUCCESS != status)
     {
         printf("Error: clGetPlatformIDs %d.\n", status);
         return status;
     }
 
-    /* get all devices id for all platforms */
-    for (cl_uint i = 0; i < platformNum; i++)
+    /* get all devices_ id for all platforms_ */
+    for (cl_uint i = 0; i < platformNum_; i++)
     {
-        status = clGetDeviceIDs(platforms[i], CL_DEVICE_TYPE_ALL, 0, NULL, &(deviceNum[i])); /* get device number */
+        status = clGetDeviceIDs(platforms_[i], CL_DEVICE_TYPE_ALL, 0, NULL, &(deviceNum_[i])); /* get device number */
         if (CL_SUCCESS != status) {
             printf("Error: clGetDeviceIDs %d.\n", status);
             return status;
         }
 
-        devices[i] = (cl_device_id *)malloc(deviceNum[i] * sizeof(cl_device_id)); /* malloc */
+        devices_[i] = (cl_device_id *)malloc(deviceNum_[i] * sizeof(cl_device_id)); /* malloc */
 
-        status = clGetDeviceIDs(platforms[i], CL_DEVICE_TYPE_ALL, deviceNum[i], devices[i], NULL); /* get device IDs */
+        status = clGetDeviceIDs(platforms_[i], CL_DEVICE_TYPE_ALL, deviceNum_[i], devices_[i], NULL); /* get device IDs */
         if(CL_SUCCESS != status) {
             printf("Error: clGetDeviceIDs %d.\n", status);
             return status;
@@ -81,16 +87,16 @@ cl_int GPUTask::SetupOpenCL()
     }
 
     /* choose a platform */
-    if (1 == platformNum) /* if only one platform, choose it */
+    if (1 == platformNum_) /* if only one platform, choose it */
     {
-        platformIdx = 0;
+        platformIdx_ = 0;
     }
     else /* if many platform, choose the vendor */
     {
-        for (uint i = 0; i < platformNum; i++)
+        for (uint i = 0; i < platformNum_; i++)
         {
             char buf[100];
-            status = clGetPlatformInfo( platforms[i],
+            status = clGetPlatformInfo( platforms_[i],
                                            CL_PLATFORM_VENDOR,
                                            100,
                                         buf,
@@ -101,32 +107,32 @@ cl_int GPUTask::SetupOpenCL()
             }
             
             if (NULL != strstr(buf, VENDOR_NAME)) {
-                platformIdx = i;
+                platformIdx_ = i;
                 break;
             }                    
         }
     }
 
     /* choose a device */
-    for (uint i = 0; i < deviceNum[platformIdx]; i++)
+    for (uint i = 0; i < deviceNum_[platformIdx_]; i++)
     {
         cl_device_type deviceType;
-        status = clGetDeviceInfo(devices[platformIdx][i],
+        status = clGetDeviceInfo(devices_[platformIdx_][i],
                                  CL_DEVICE_TYPE,
                                  sizeof(cl_device_type),
                                  &deviceType,
                                  NULL
                                 );
         if (CL_DEVICE_TYPE_GPU == deviceType) {
-            deviceIdx[platformIdx] = i;
+            deviceIdx_[platformIdx_] = i;
             break;
         }
     }
     
-    /* create a context */
-    context = clCreateContext(NULL,
-                              deviceNum[platformIdx],
-                              devices[platformIdx],
+    /* create a context_ */
+    context_ = clCreateContext(NULL,
+                              deviceNum_[platformIdx_],
+                              devices_[platformIdx_],
                               NULL,
                               NULL,
                               &status);
@@ -136,8 +142,8 @@ cl_int GPUTask::SetupOpenCL()
     }
     
     /* create a command queue */
-    commandQueue = clCreateCommandQueue(context,    /* or using clCreateCommandQueueWithProperties */
-                                            devices[platformIdx][deviceIdx[platformIdx]],
+    commandQueue_ = clCreateCommandQueue(context_,    /* or using clCreatecommandQueue_WithProperties */
+                                            devices_[platformIdx_][deviceIdx_[platformIdx_]],
                                             CL_QUEUE_PROFILING_ENABLE,
                                             &status);
     if (CL_SUCCESS != status) {
@@ -147,8 +153,8 @@ cl_int GPUTask::SetupOpenCL()
     
     /* printf info */
     printf("OpenCL environment Setup!\n");
-    printf("# %d platforms found.\n", platformNum);
-    printf("# %d devices found on platform-%d.\n", deviceNum[platformIdx], platformIdx);
+    printf("# %d platforms found.\n", platformNum_);
+    printf("# %d devices found on platform-%d.\n", deviceNum_[platformIdx_], platformIdx_);
     printf("\n");
     
     return status;
@@ -159,35 +165,35 @@ cl_int GPUTask::CleanOpenCL()
 {
     cl_int status = CL_SUCCESS;
     
-    if (NULL != platforms) {
-        free(platforms);
+    if (NULL != platforms_) {
+        free(platforms_);
     }
     
-    if (NULL != devices) {
-        for (int i = 0; i < platformNum; i++) {
-            free(devices[i]);
+    if (NULL != devices_) {
+        for (int i = 0; i < platformNum_; i++) {
+            free(devices_[i]);
         }
-        free(devices);
+        free(devices_);
     }
     
-    if (NULL != deviceNum) {
-        free(deviceNum);
+    if (NULL != deviceNum_) {
+        free(deviceNum_);
     }
     
-    if (NULL != deviceIdx) {
-        free(deviceIdx);
+    if (NULL != deviceIdx_) {
+        free(deviceIdx_);
     }
     
-    if (NULL != context) {
-        status = clReleaseContext(context);
+    if (NULL != context_) {
+        status = clReleaseContext(context_);
         if (CL_SUCCESS != status) {
-            printf("Error: clReleaseContext %d.\n", status);
+            printf("Error: clReleasecontext_ %d.\n", status);
             return status;
         }
     }
     
-    if (NULL != commandQueue) {
-        status = clReleaseCommandQueue(commandQueue);
+    if (NULL != commandQueue_) {
+        status = clReleaseCommandQueue(commandQueue_);
         if (CL_SUCCESS != status) {
             printf("Error: clReleaseCommandQueue %d.\n", status);
             return status;

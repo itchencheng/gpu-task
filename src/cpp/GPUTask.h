@@ -14,7 +14,12 @@
 #ifndef __GPUTask_H
 #define __GPUTask_H
 
-class GPUTask{
+
+#include <CL/cl.h>
+
+
+class GPUTask
+{
 public:
     GPUTask();
     ~GPUTask();
@@ -24,18 +29,18 @@ public:
 
 public:
 	/* platform */
-    cl_uint             platformNum;
-    cl_platform_id *    platforms;
-    cl_uint             platformIdx;
+    cl_uint             platformNum_;
+    cl_platform_id *    platforms_;
+    cl_uint             platformIdx_;
 
     /* device */
-    cl_device_id **     devices;
-    cl_uint *           deviceNum;
-    cl_uint *           deviceIdx;
+    cl_device_id **     devices_;
+    cl_uint *           deviceNum_;
+    cl_uint *           deviceIdx_;
 
     /* context and command queue */
-    cl_context          context;
-    cl_command_queue    commandQueue;
+    cl_context          context_;
+    cl_command_queue    commandQueue_;
 };
 
 

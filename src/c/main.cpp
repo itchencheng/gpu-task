@@ -13,7 +13,6 @@
 
 #include "helper.h"
 
-
 int main(int argc, char** argv)
 {
     cl_int status = CL_SUCCESS;    
@@ -77,3 +76,4 @@ int main(int argc, char** argv)
 
 	return 0;
 }
+
