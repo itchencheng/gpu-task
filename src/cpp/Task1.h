@@ -19,6 +19,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <string>
 
 class Task1 : public GPUTask
 {
@@ -31,6 +32,9 @@ public:
 	cl_int CreateMemObjects(float * a, float * b);
 	cl_int RunKernel();
 	cl_int ReleaseX();
+
+private:
+    std::string GetDirName(const char * filepath);
 
 public:
     cl_program        program_;

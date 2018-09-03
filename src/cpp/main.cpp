@@ -16,7 +16,6 @@
 
 int main(int argc, char ** argv)
 {
-    std::cout << "hello OpenCL!" << std::endl;
     cl_int status = CL_SUCCESS;   
 
     Task1 gpu_task;
@@ -29,7 +28,8 @@ int main(int argc, char ** argv)
     gpu_task.CreateProgram(filepath.c_str());
 
     // create kernel
-    gpu_task.CreateKernels("kernel_add");
+    //gpu_task.CreateKernels("kernel_add");
+    gpu_task.CreateKernels("kernel_mul");
 
     // prepare buffer  
     float a[10];
