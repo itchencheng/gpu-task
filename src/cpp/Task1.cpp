@@ -32,63 +32,6 @@ Task1::~Task1()
 }
 
 
-std::string Task1::GetDirName(const char * filepath)
-{
-    std::string dir_str;
-    std::string path_str = std::string(filepath);
-    int i = path_str.size() - 1;
-    for (; i >= 0; i-- ) {
-        if (path_str[i] == '/') {
-            break;
-        }
-    }
-    if (i < 0) {
-        dir_str = std::string("./");
-    }
-    else {
-        dir_str = path_str.substr(0, i+1);
-    }
-
-    return  std::string("-I") + dir_str;
-}
-
-
-cl_int Task1::CreateProgram(const char * filepath)
-{
-    cl_int status = CL_SUCCESS;
-
-    std::ifstream kernelFile(filepath, std::ios::in);
-    if (!kernelFile.is_open()) {
-        std::cerr << "Failed to open " << filepath << std::endl;
-    }
-
-    std::ostringstream oss;
-    oss << kernelFile.rdbuf();
-
-    std::string srcStdStr = oss.str();
-    const char * srcStr   = srcStdStr.c_str();
-
-    //printf("%s\n", srcStr);    
-
-    program_ = clCreateProgramWithSource(context_,
-                                       1,
-                                       &srcStr,
-                                       NULL,
-                                       &status
-                                       );
-    if (NULL == program_) {
-        std::cerr << "Failed to create program: " << status << std::endl;
-    }
-
-    status = clBuildProgram(program_, 0, NULL, GetDirName(filepath).c_str(), NULL, NULL);
-    if (CL_SUCCESS != status) {
-        std::cerr << "Failed to build program: " << status << std::endl;
-        clReleaseProgram(program_);
-    }
-
-    return status;
-}
-
 
 /* kernel */
 cl_int Task1::CreateKernels(const char * kernel_name)

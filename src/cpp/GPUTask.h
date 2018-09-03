@@ -16,7 +16,10 @@
 
 
 #include <CL/cl.h>
-
+#include <iostream>
+#include <string>
+#include <cstdio>
+#include <cstdlib>
 
 class GPUTask
 {
@@ -26,6 +29,9 @@ public:
 
     cl_int SetupOpenCL();
     cl_int CleanOpenCL();
+	cl_int CreateProgram(const char * filepath);
+
+    std::string GetDirName(const char * filepath);
 
 public:
 	/* platform */
@@ -41,6 +47,9 @@ public:
     /* context and command queue */
     cl_context          context_;
     cl_command_queue    commandQueue_;
+
+    /* program */
+    cl_program        program_;
 };
 
 
