@@ -9,8 +9,8 @@ cppbuild:
 	g++ -I /usr/local/cuda-9.0/include \
         -L /usr/local/cuda-9.0/lib64 \
         src/cpp/main.cpp \
-        src/cpp/GPUTask.h \
-        src/cpp/GPUTask.cpp \
+        src/cpp/OpenCLTask.h \
+        src/cpp/OpenCLTask.cpp \
         src/cpp/Task1.h \
         src/cpp/Task1.cpp \
         -lOpenCL \

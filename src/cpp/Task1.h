@@ -14,9 +14,9 @@
 #ifndef __TASK1_H
 #define __TASK1_H
 
-#include "GPUTask.h"
+#include "OpenCLTask.h"
 
-class Task1 : public GPUTask
+class Task1 : public OpenCLTask
 {
 public:
 	Task1();

@@ -1,6 +1,6 @@
 /*
  ******************************************************************************
- *       Filename:    GPUTask.h
+ *       Filename:    OpenCLTask.h
  *    Description:    cpp file
  *       
  *        Version:    1.0
@@ -11,8 +11,8 @@
  ******************************************************************************
  */
 
-#ifndef __GPUTask_H
-#define __GPUTask_H
+#ifndef __OpenCLTask_H
+#define __OpenCLTask_H
 
 
 #include <CL/cl.h>
@@ -21,11 +21,11 @@
 #include <cstdio>
 #include <cstdlib>
 
-class GPUTask
+class OpenCLTask
 {
 public:
-    GPUTask();
-    ~GPUTask();
+    OpenCLTask();
+    ~OpenCLTask();
 
     cl_int SetupOpenCL();
     cl_int CleanOpenCL();
@@ -53,4 +53,4 @@ public:
 };
 
 
-#endif //__GPUTask_H
+#endif //__OpenCLTask_H

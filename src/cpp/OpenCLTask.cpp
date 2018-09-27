@@ -1,6 +1,6 @@
 /*
  ******************************************************************************
- *       Filename:    GPUTask.cpp
+ *       Filename:    OpenCLTask.cpp
  *    Description:    cpp file
  *       
  *        Version:    1.0
@@ -11,7 +11,7 @@
  ******************************************************************************
  */
 
-#include "GPUTask.h"
+#include "OpenCLTask.h"
 
 #include <cstring>
 #include <fstream>
@@ -20,7 +20,7 @@
 #define VENDOR_NAME "NVIDIA"
 
 
-GPUTask::GPUTask()
+OpenCLTask::OpenCLTask()
 {
     /* platform */
     cl_uint             platformNum_ = 0;
@@ -38,13 +38,13 @@ GPUTask::GPUTask()
 }
 
 
-GPUTask::~GPUTask()
+OpenCLTask::~OpenCLTask()
 {
 
 }
 
 
-cl_int GPUTask::SetupOpenCL()
+cl_int OpenCLTask::SetupOpenCL()
 {
     cl_int status = CL_SUCCESS;
     
@@ -161,7 +161,7 @@ cl_int GPUTask::SetupOpenCL()
 }
 
 
-cl_int GPUTask::CleanOpenCL()
+cl_int OpenCLTask::CleanOpenCL()
 {
     cl_int status = CL_SUCCESS;
     
@@ -205,7 +205,7 @@ cl_int GPUTask::CleanOpenCL()
 }
 
 
-std::string GPUTask::GetDirName(const char * filepath)
+std::string OpenCLTask::GetDirName(const char * filepath)
 {
     std::string dir_str;
     std::string path_str = std::string(filepath);
@@ -226,7 +226,7 @@ std::string GPUTask::GetDirName(const char * filepath)
 }
 
 
-cl_int GPUTask::CreateProgram(const char * filepath)
+cl_int OpenCLTask::CreateProgram(const char * filepath)
 {
     cl_int status = CL_SUCCESS;
 
