@@ -28,12 +28,12 @@ public:
 	cl_int ReleaseX();
 
 public:
-    cl_kernel         kernel1_;
-    cl_kernel         kernel2_;
+    cl_kernel         _kernel1;
+    cl_kernel         _kernel2;
 
-    cl_mem            src1_;
-    cl_mem            src2_;
-    cl_mem            dst_;
+    cl_mem            _src1;
+    cl_mem            _src2;
+    cl_mem            _dst;
 };
 
 

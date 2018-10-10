@@ -35,21 +35,21 @@ public:
 
 public:
 	/* platform */
-    cl_uint             platformNum_;
-    cl_platform_id *    platforms_;
-    cl_uint             platformIdx_;
+    cl_uint             _platformNum;
+    cl_platform_id *    _platforms;
+    cl_uint             _platformIdx;
 
     /* device */
-    cl_device_id **     devices_;
-    cl_uint *           deviceNum_;
-    cl_uint *           deviceIdx_;
+    cl_device_id **     _devices;
+    cl_uint *           _deviceNum;
+    cl_uint *           _deviceIdx;
 
     /* context and command queue */
-    cl_context          context_;
-    cl_command_queue    commandQueue_;
+    cl_context          _context;
+    cl_command_queue    _commandQueue;
 
     /* program */
-    cl_program        program_;
+    cl_program        _program;
 };
 
 

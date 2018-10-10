@@ -47,8 +47,8 @@ int main(int argc, char ** argv)
 
 
     // read mem
-    status = clEnqueueReadBuffer(gpu_task.commandQueue_,
-                        gpu_task.dst_,
+    status = clEnqueueReadBuffer(gpu_task._commandQueue,
+                        gpu_task._dst,
                         CL_TRUE,
                         0,
                         sizeof(float) * 10,

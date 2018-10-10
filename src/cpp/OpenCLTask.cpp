@@ -23,18 +23,18 @@
 OpenCLTask::OpenCLTask()
 {
     /* platform */
-    cl_uint             platformNum_ = 0;
-    cl_platform_id *    platforms_ = NULL;
-    cl_uint             platformIdx_ = 0;
+    cl_uint             _platformNum = 0;
+    cl_platform_id *    _platforms = NULL;
+    cl_uint             _platformIdx = 0;
 
     /* device */
-    cl_device_id **     devices_ = NULL;
-    cl_uint *           deviceNum_ = NULL;
-    cl_uint *           deviceIdx_ = NULL;
+    cl_device_id **     _devices = NULL;
+    cl_uint *           _deviceNum = NULL;
+    cl_uint *           _deviceIdx = NULL;
 
-    /* context_ and command queue */
-    cl_context          context_ = NULL;
-    cl_command_queue    commandQueue_ = NULL;    
+    /* _context and command queue */
+    cl_context          _context = NULL;
+    cl_command_queue    _commandQueue = NULL;    
 }
 
 
@@ -49,37 +49,37 @@ cl_int OpenCLTask::SetupOpenCL()
     cl_int status = CL_SUCCESS;
     
     /* get all platform IDs */
-    status = clGetPlatformIDs(0, NULL, &(platformNum_));/* get platform number */
+    status = clGetPlatformIDs(0, NULL, &(_platformNum));/* get platform number */
     if (CL_SUCCESS != status )
     {
         printf("Error: clGetPlatformIDs %d.\n", status);
         return status;
     }
     
-    platforms_ = (cl_platform_id *)malloc(platformNum_ * sizeof(cl_platform_id)); /*malloc */
-    devices_   = (cl_device_id **)malloc(platformNum_ * sizeof(cl_device_id *));
-    deviceNum_ = (cl_uint *)malloc(platformNum_ * sizeof(cl_uint));
-    deviceIdx_ = (cl_uint *)malloc(platformNum_ * sizeof(cl_uint));
+    _platforms = (cl_platform_id *)malloc(_platformNum * sizeof(cl_platform_id)); /*malloc */
+    _devices   = (cl_device_id **)malloc(_platformNum * sizeof(cl_device_id *));
+    _deviceNum = (cl_uint *)malloc(_platformNum * sizeof(cl_uint));
+    _deviceIdx = (cl_uint *)malloc(_platformNum * sizeof(cl_uint));
 
-    status = clGetPlatformIDs(platformNum_, platforms_, NULL);/* get platform IDs */
+    status = clGetPlatformIDs(_platformNum, _platforms, NULL);/* get platform IDs */
     if (CL_SUCCESS != status)
     {
         printf("Error: clGetPlatformIDs %d.\n", status);
         return status;
     }
 
-    /* get all devices_ id for all platforms_ */
-    for (cl_uint i = 0; i < platformNum_; i++)
+    /* get all _devices id for all _platforms */
+    for (cl_uint i = 0; i < _platformNum; i++)
     {
-        status = clGetDeviceIDs(platforms_[i], CL_DEVICE_TYPE_ALL, 0, NULL, &(deviceNum_[i])); /* get device number */
+        status = clGetDeviceIDs(_platforms[i], CL_DEVICE_TYPE_ALL, 0, NULL, &(_deviceNum[i])); /* get device number */
         if (CL_SUCCESS != status) {
             printf("Error: clGetDeviceIDs %d.\n", status);
             return status;
         }
 
-        devices_[i] = (cl_device_id *)malloc(deviceNum_[i] * sizeof(cl_device_id)); /* malloc */
+        _devices[i] = (cl_device_id *)malloc(_deviceNum[i] * sizeof(cl_device_id)); /* malloc */
 
-        status = clGetDeviceIDs(platforms_[i], CL_DEVICE_TYPE_ALL, deviceNum_[i], devices_[i], NULL); /* get device IDs */
+        status = clGetDeviceIDs(_platforms[i], CL_DEVICE_TYPE_ALL, _deviceNum[i], _devices[i], NULL); /* get device IDs */
         if(CL_SUCCESS != status) {
             printf("Error: clGetDeviceIDs %d.\n", status);
             return status;
@@ -87,16 +87,16 @@ cl_int OpenCLTask::SetupOpenCL()
     }
 
     /* choose a platform */
-    if (1 == platformNum_) /* if only one platform, choose it */
+    if (1 == _platformNum) /* if only one platform, choose it */
     {
-        platformIdx_ = 0;
+        _platformIdx = 0;
     }
     else /* if many platform, choose the vendor */
     {
-        for (uint i = 0; i < platformNum_; i++)
+        for (uint i = 0; i < _platformNum; i++)
         {
             char buf[100];
-            status = clGetPlatformInfo( platforms_[i],
+            status = clGetPlatformInfo( _platforms[i],
                                            CL_PLATFORM_VENDOR,
                                            100,
                                         buf,
@@ -107,32 +107,32 @@ cl_int OpenCLTask::SetupOpenCL()
             }
             
             if (NULL != strstr(buf, VENDOR_NAME)) {
-                platformIdx_ = i;
+                _platformIdx = i;
                 break;
             }                    
         }
     }
 
     /* choose a device */
-    for (uint i = 0; i < deviceNum_[platformIdx_]; i++)
+    for (uint i = 0; i < _deviceNum[_platformIdx]; i++)
     {
         cl_device_type deviceType;
-        status = clGetDeviceInfo(devices_[platformIdx_][i],
+        status = clGetDeviceInfo(_devices[_platformIdx][i],
                                  CL_DEVICE_TYPE,
                                  sizeof(cl_device_type),
                                  &deviceType,
                                  NULL
                                 );
         if (CL_DEVICE_TYPE_GPU == deviceType) {
-            deviceIdx_[platformIdx_] = i;
+            _deviceIdx[_platformIdx] = i;
             break;
         }
     }
     
-    /* create a context_ */
-    context_ = clCreateContext(NULL,
-                              deviceNum_[platformIdx_],
-                              devices_[platformIdx_],
+    /* create a _context */
+    _context = clCreateContext(NULL,
+                              _deviceNum[_platformIdx],
+                              _devices[_platformIdx],
                               NULL,
                               NULL,
                               &status);
@@ -142,8 +142,8 @@ cl_int OpenCLTask::SetupOpenCL()
     }
     
     /* create a command queue */
-    commandQueue_ = clCreateCommandQueue(context_,    /* or using clCreatecommandQueue_WithProperties */
-                                            devices_[platformIdx_][deviceIdx_[platformIdx_]],
+    _commandQueue = clCreateCommandQueue(_context,    /* or using clCreate_commandQueueWithProperties */
+                                            _devices[_platformIdx][_deviceIdx[_platformIdx]],
                                             CL_QUEUE_PROFILING_ENABLE,
                                             &status);
     if (CL_SUCCESS != status) {
@@ -153,8 +153,8 @@ cl_int OpenCLTask::SetupOpenCL()
     
     /* printf info */
     printf("OpenCL environment Setup!\n");
-    printf("# %d platforms found.\n", platformNum_);
-    printf("# %d devices found on platform-%d.\n", deviceNum_[platformIdx_], platformIdx_);
+    printf("# %d platforms found.\n", _platformNum);
+    printf("# %d devices found on platform-%d.\n", _deviceNum[_platformIdx], _platformIdx);
     printf("\n");
     
     return status;
@@ -165,35 +165,35 @@ cl_int OpenCLTask::CleanOpenCL()
 {
     cl_int status = CL_SUCCESS;
     
-    if (NULL != platforms_) {
-        free(platforms_);
+    if (NULL != _platforms) {
+        free(_platforms);
     }
     
-    if (NULL != devices_) {
-        for (int i = 0; i < platformNum_; i++) {
-            free(devices_[i]);
+    if (NULL != _devices) {
+        for (int i = 0; i < _platformNum; i++) {
+            free(_devices[i]);
         }
-        free(devices_);
+        free(_devices);
     }
     
-    if (NULL != deviceNum_) {
-        free(deviceNum_);
+    if (NULL != _deviceNum) {
+        free(_deviceNum);
     }
     
-    if (NULL != deviceIdx_) {
-        free(deviceIdx_);
+    if (NULL != _deviceIdx) {
+        free(_deviceIdx);
     }
     
-    if (NULL != context_) {
-        status = clReleaseContext(context_);
+    if (NULL != _context) {
+        status = clReleaseContext(_context);
         if (CL_SUCCESS != status) {
-            printf("Error: clReleasecontext_ %d.\n", status);
+            printf("Error: clRelease_context %d.\n", status);
             return status;
         }
     }
     
-    if (NULL != commandQueue_) {
-        status = clReleaseCommandQueue(commandQueue_);
+    if (NULL != _commandQueue) {
+        status = clReleaseCommandQueue(_commandQueue);
         if (CL_SUCCESS != status) {
             printf("Error: clReleaseCommandQueue %d.\n", status);
             return status;
@@ -243,20 +243,20 @@ cl_int OpenCLTask::CreateProgram(const char * filepath)
 
     //printf("%s\n", srcStr);    
 
-    program_ = clCreateProgramWithSource(context_,
+    _program = clCreateProgramWithSource(_context,
                                        1,
                                        &srcStr,
                                        NULL,
                                        &status
                                        );
-    if (NULL == program_) {
+    if (NULL == _program) {
         std::cerr << "Failed to create program: " << status << std::endl;
     }
 
-    status = clBuildProgram(program_, 0, NULL, GetDirName(filepath).c_str(), NULL, NULL);
+    status = clBuildProgram(_program, 0, NULL, GetDirName(filepath).c_str(), NULL, NULL);
     if (CL_SUCCESS != status) {
         std::cerr << "Failed to build program: " << status << std::endl;
-        clReleaseProgram(program_);
+        clReleaseProgram(_program);
     }
 
     return status;

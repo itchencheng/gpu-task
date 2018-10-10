@@ -16,13 +16,13 @@
 
 Task1::Task1()
 {
-    program_ = NULL;
-    kernel1_ = NULL;
-    kernel2_ = NULL;
+    _program = NULL;
+    _kernel1 = NULL;
+    _kernel2 = NULL;
 
-    src1_ = NULL;
-    src2_ = NULL;
-    dst_ = NULL;
+    _src1 = NULL;
+    _src2 = NULL;
+    _dst = NULL;
 }
 
 
@@ -38,7 +38,7 @@ cl_int Task1::CreateKernels(const char * kernel_name)
 {
     cl_int status = CL_SUCCESS;
 
-    kernel1_ = clCreateKernel(program_, kernel_name, &status);
+    _kernel1 = clCreateKernel(_program, kernel_name, &status);
     if (CL_SUCCESS == status) {
         return status;
     }
@@ -53,17 +53,17 @@ cl_int Task1::CreateMemObjects(float * a, float * b)
 {
     cl_int status = CL_SUCCESS;
 
-    src1_ = clCreateBuffer(context_,
+    _src1 = clCreateBuffer(_context,
                                 CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
                                 sizeof(float) * 10,
                                 a, &status);
 
-    src2_ = clCreateBuffer(context_,
+    _src2 = clCreateBuffer(_context,
                                 CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
                                 sizeof(float) * 10,
                                 b, &status);
 
-    dst_  = clCreateBuffer(context_,
+    _dst  = clCreateBuffer(_context,
                                 CL_MEM_READ_WRITE,
                                 sizeof(float) * 10,
                                 a, &status);
@@ -77,9 +77,9 @@ cl_int Task1::RunKernel()
 {
     cl_int status = CL_SUCCESS;
 
-    status  = clSetKernelArg(kernel1_, 0, sizeof(cl_mem), &src1_);
-    status |= clSetKernelArg(kernel1_, 1, sizeof(cl_mem), &src2_);
-    status |= clSetKernelArg(kernel1_, 2, sizeof(cl_mem), &dst_);
+    status  = clSetKernelArg(_kernel1, 0, sizeof(cl_mem), &_src1);
+    status |= clSetKernelArg(_kernel1, 1, sizeof(cl_mem), &_src2);
+    status |= clSetKernelArg(_kernel1, 2, sizeof(cl_mem), &_dst);
     if (CL_SUCCESS != status) {
         printf("Error: clSetKernelArg failed %d.\n", status);
         return status;
@@ -88,8 +88,8 @@ cl_int Task1::RunKernel()
     size_t globalSize[2] = {10, 1}; 
     size_t localSize[2]  = {1,  1};
 
-    status = clEnqueueNDRangeKernel(commandQueue_,
-                                    kernel1_,
+    status = clEnqueueNDRangeKernel(_commandQueue,
+                                    _kernel1,
                                     1,
                                     NULL,
                                     globalSize, 
@@ -111,17 +111,17 @@ cl_int Task1::ReleaseX()
 {
     cl_int status = CL_SUCCESS;
 
-    if (NULL != kernel1_) {
-        clReleaseKernel(kernel1_);
+    if (NULL != _kernel1) {
+        clReleaseKernel(_kernel1);
     } 
 
-    if (NULL != program_) {
-        clReleaseProgram(program_);
+    if (NULL != _program) {
+        clReleaseProgram(_program);
     }    
 
-    clReleaseMemObject(src1_);
-    clReleaseMemObject(src2_);
-    clReleaseMemObject(dst_);
+    clReleaseMemObject(_src1);
+    clReleaseMemObject(_src2);
+    clReleaseMemObject(_dst);
 
     return status;
 }
